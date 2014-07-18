@@ -1,0 +1,91 @@
+body
+{
+	background-color:#fffde0;
+}
+#videos
+{
+	text-align: center;;
+}
+
+#ad_container 
+{
+    position: relative;
+}
+
+#buffer 
+{
+	margin-top:40px;
+}
+
+#infoi 
+{
+    
+}
+.remoteform , .myform, #general
+{
+	background-color:#ffeeb5;
+	text-align: center;
+}
+#general
+{
+	
+}
+#logo
+{
+	background-color:#d5e5f2;
+}
+#logo
+{
+	font-size: 4em;
+	text-align: center;
+}
+#deal
+{
+	color: red;
+	font-family: sans-serif;
+	font-weight: bold;
+}
+#done
+{
+	color:blue;
+	font-family: Helvetica;
+	font-weight: bold;
+}
+#and
+{
+	color:black;
+	font-family: Helvetica;
+}
+#formData , #login
+{
+	visibility: hidden;
+}
+#small_header
+{
+	background-color:#f8f8f8;
+	margin: 8px;
+}
+#header
+{
+	background-color:#484538;
+	color:#f0f0f0;
+	text-align: center;
+	padding: 5px;
+}
+#topmenu
+{
+	background-color:#252525;
+	color:#f0f0f0;
+	text-align: center;
+	padding: 10px;
+}
+#separator
+{
+	margin: 100px;
+}
+#buttons
+{
+	text-align: center;
+	height: 2em;
+	
+}

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+
+<!--Title: Fork and Record WebRTC
+Author: Michael Kugel (mkugel@tssg.org)
+Date: 30th June 2014Version 0.1.0
+
+Copyright (c) 2014, WATERFORD INSTITUTE OF TECHNOLOGY (TSSG)
+
+All rights reserved.
+
+This project is making use of RecordRTC by Muaz Khan under MIT licence.
+All other code that is not inside RecordRTC was develped by Michael Kugel (3MT, TSSG, WIT) (c) 2014
+This is a demo for WebRTC audio and video stream recording and replay. Main focus on using Google Chrome.
+Some experimental code is added for firefox and the use of TURN server technology for ICE (not complete). -->
+
+<html>
+<head>
+    <meta name='keywords' content='WebRTC, HTML5, JavaScript' />
+    <meta name='description' content='WebRTC Reference App' />
+    <meta name='viewport' content='width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1'>
+    <base target='_blank'>
+    <title>WebRTC fork and record</title>
+    <link rel='stylesheet' href='css/main.css' />
+    <script src="./js/RecordRTC.js"></script>
+    
+    <style>
+/*	html { overflow: hidden; }*/
+	body { 
+		font: 14pt Arial, sans-serif; 
+		background: lightgrey;
+/*
+		display: flex;
+		flex-direction: column;
+*/
+		height: 100vh;
+		width: 100%;
+		margin: 0 0;
+	}
+	canvas { 
+		display: inline-block; 
+		background: #202020; 
+/*
+		width: 95%;
+		height: 45%;
+*/
+        
+        width 100%;
+        height: 100%;
+        
+		box-shadow: 0px 0px 10px blue;
+	}
+	#controls {
+/*
+		display: flex;
+		flex-direction: row;
+*/
+		align-items: center;
+/*		justify-content: space-around;*/
+		height: 100%;
+		width: 100%;
+	}
+	#record { height: 15vh; }
+	#record.recording { 
+		background: red;
+		background: -webkit-radial-gradient(center, ellipse cover, #ff0000 0%,lightgrey 75%,lightgrey 100%,#7db9e8 100%); 
+		background: -moz-radial-gradient(center, ellipse cover, #ff0000 0%,lightgrey 75%,lightgrey 100%,#7db9e8 100%); 
+		background: radial-gradient(center, ellipse cover, #ff0000 0%,lightgrey 75%,lightgrey 100%,#7db9e8 100%); 
+	}
+	#save, #save img { height: 10vh; }
+	#save { opacity: 0.25;}
+	#save[download] { opacity: 1;}
+	#viz {
+		height: 100%;
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-around;
+		align-items: center;
+	}
+	@media (orientation: landscape) {
+		body { flex-direction: row;}
+		#controls { flex-direction: column; height: 100%; width: 10%;}
+		#viz { height: 10%; width: 100%;}
+	}
+
+	</style>
+    
+</head>
+
+<body onload="addEventListeners()">
+    
+<div id="header">RTC media stream forking and recording demo</div>
+    <div id="topmenu"><span>mKugel </span><span>| TSSG | </span><span>2014</span></div>
+    <div id="ad_container">
+<!--        <div id="logo"><span id="deal">fork</span><span id="and">&rec<span id="done">RTC</span></div>-->
+    </div>
+
+<div id='container'>
+    <div id='videos'>
+        <video id='localVideo' controls autoplay width="440" height="230"></video>
+        <div><- Local -></div><video id='remoteVideo' controls autoplay width="320" height="230"></video><div><- Remote -></div>
+            
+    </div>
+</div>
+
+        
+
+
+<div>
+    <div align="center">
+        <button id="recordButton" disabled >Record</button>
+        <button id="stopRecordingButton" >Stop Recording</button>
+        <button id="stopPCButton" >Stop Peer Conn.</button>
+    </div>
+    <div align="center">
+        <button id="recordAudioButton" >Record Audio</button>
+        <button id="stopRecordingAudioButton" >Stop Recording Audio</button>
+    </div>
+    <div align="center">
+        <button id="startRecordingAudioAndVideoButton" disabled>Record A+V FF</button>
+        <button id="stopRecordingAudioAndVideoButton" disabled>Stop Recording A+V FF</button>
+    </div>
+    <div align="center">
+        <button id="startRecordingAudioAndVideoChromeButton" disabled >Record A+V Chrome</button>
+        <button id="stopRecordingAudioAndVideoChromeButton" >Stop Recording A+V Chrome</button>
+    </div>
+    <div align="center">
+        <button id="replayConversationButton" >Replay Conversation</button>
+    </div>
+</div>
+<!--</div>-->
+        <div></div>
+        <span id="viz">
+            <canvas id="analyser" width="120" height="30"></canvas>
+            <canvas id="wavedisplay" width="120" height="30"></canvas>
+        </span>
+        <span id="controls">
+            <img id="record" src="img/mic128.png" onclick="toggleRecording(this);">
+            <a id="save" href="#"><img src="img/save.svg"></a>
+        </span>
+</div>
+        <div id="recordings">
+            <div><span> RECORDING 1-></span><video id='recordedVideo' controls height="230"></video>
+            <span> RECORDING 2-></span><video id='recordedVideo2' controls></video>
+                <div hidden="true">
+                <span> A+V RECORDING-></span><video id='audioAndVideo1' controls></video>
+                </div>
+            </div>
+            </div>
+        
+        <div id='audios' align="center">
+    <span>AUDIO 1-></span>
+    <audio id='audio1' controls>
+        <source src="" type="audio/ogg">
+        Your browser does not support the audio element.
+    </audio>
+    <span>AUDIO 2-></span>
+    <audio id='audio2' controls>
+        <source src="" type="audio/ogg">
+        Your browser does not support the audio element.
+    </audio>
+</div>
+
+<script src='/socket.io/socket.io.js'></script>
+<script src='js/lib/adapter.js'></script>
+<script src='js/main.js'></script>
+<script src="./js/tssgRtcRecording.js"></script>
+        
+<script src="js/audiodisplay.js"></script>
+<script src="js/recorderjs/recorder.js"></script>
+<script src="js/mainRec.js"></script>
+
+</body>
+</html>
